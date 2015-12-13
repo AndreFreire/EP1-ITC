@@ -4,19 +4,24 @@ import java.io.IOException;
 
 public class Reader {
 	public static Automaton leitura(){
+
 		Automaton automaton = new Automaton();
-		try { 
+		
+		try {
 			FileReader file = new FileReader("input.txt"); 
 			BufferedReader fileReader = new BufferedReader(file); 
-			String header = fileReader.readLine(); // lê a primeira linha
+			String header = fileReader.readLine(); // le a primeira linha
 			String [] fieldHeader = header.split(" ");
+			
 			if (fieldHeader.length != 3){
-				System.out.println("Erro na leitura do cabeçalho");
+				System.out.println("Erro na leitura do cabecalho");
 				//return;
 			}
-			for(int i=0; i<Integer.parseInt(fieldHeader[0]); i++){
+			
+			for(int i = 0; i < Integer.parseInt(fieldHeader[0]); i++){
 				automaton.addState(new State(i));
 			}
+			
 			int numberOfSimbols = Integer.parseInt(fieldHeader[1]);
 			State updatedState = automaton.getState(Integer.parseInt(fieldHeader[2]));
 			updatedState.setFirst(true);
@@ -43,7 +48,7 @@ public class Reader {
 				String [] transions = line.split(" "); 
 				for(int j=0; j<Integer.parseInt(fieldHeader[1]);j++){
 					if (!transions[j].equals("-1"))
-						automaton.addLinker(new Linker(automaton.getState(i), automaton.getState(Integer.parseInt(transions[j])), String.valueOf(j) ));
+						automaton.addLinker(new Linker(automaton.getState(i), automaton.getState(Integer.parseInt(transions[j])), String.valueOf(j)));
 				}
 			}
 			
@@ -54,7 +59,3 @@ public class Reader {
 		return automaton;
 	}
 }
-
-
-
-

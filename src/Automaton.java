@@ -89,7 +89,8 @@ public class Automaton {
 				if(	this.states.get(i).isAcept() && this.states.get(j).isAcept() ||
 					this.states.get(i).isReject() && this.states.get(j).isReject() || 
 					!this.states.get(i).isAcept() && !this.states.get(j).isAcept() &&
-					!this.states.get(i).isReject() && !this.states.get(j).isReject()){
+					!this.states.get(i).isReject() && !this.states.get(j).isReject() &&
+					i != j){
 					
 					matriz[i][j] = 1;
 				}else{

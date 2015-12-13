@@ -81,6 +81,67 @@ public class Automaton {
 		}
 		state.setAccessibleFinished(true);
 	}	
+	
+	public void equivalentStates(){
+		int [][] matriz = new int[this.states.size()][this.states.size()];
+		for(int i=0; i<this.states.size();i++){
+			for(int j=0; j<this.states.size();i++){
+				if(	this.states.get(i).isAcept() && this.states.get(j).isAcept() ||
+					this.states.get(i).isReject() && this.states.get(j).isReject() || 
+					!this.states.get(i).isAcept() && !this.states.get(j).isAcept() &&
+					!this.states.get(i).isReject() && !this.states.get(j).isReject()){
+					
+					matriz[i][j] = 1;
+				}else{
+					matriz[i][j] = 0;
+				}
+				
+			}
+		}
+		for(int i=0; i<this.states.size();i++){
+			for(int j=0; j<this.states.size();j++){
+				if(matriz[i][j] == 1){
+					if(!verifyTransions(this.states.get(i),this.states.get(j))){
+						matriz[i][j] = 0;
+					}
+				}
+			}
+		}
+	}
+	private boolean verifyTransions(State state, State state2) {
+		boolean aux = false;
+		for(int i=0; i<this.linkers.size();i++){
+			if(this.linkers.get(i).getStart().equals(state) || this.linkers.get(i).getFinish().equals(state)){
+				aux = false;
+				for(int j=0; j<this.linkers.size();j++){
+					if(this.linkers.get(j).getStart().equals(state2) || this.linkers.get(j).getFinish().equals(state2) &&
+							this.linkers.get(i).getStart().equals(this.linkers.get(j).getStart()) ||
+							this.linkers.get(i).getFinish().equals(this.linkers.get(j).getFinish()) &&
+							this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())){
+						aux = true;
+					} 
+							
+				}
+				if(!aux) return aux;
+			}
+		}
+		for(int i=0; i<this.linkers.size();i++){
+			if(this.linkers.get(i).getStart().equals(state2) || this.linkers.get(i).getFinish().equals(state2)){
+				aux = false;
+				for(int j=0; j<this.linkers.size();j++){
+					if(this.linkers.get(j).getStart().equals(state) || this.linkers.get(j).getFinish().equals(state) &&
+							this.linkers.get(i).getStart().equals(this.linkers.get(j).getStart()) ||
+							this.linkers.get(i).getFinish().equals(this.linkers.get(j).getFinish()) && 
+							this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())){
+						aux = true;
+					} 							
+				}
+				if(!aux) return aux;
+			}
+		}
+		
+		return aux;
+	}
 	public void minimizer(){
 		removeInaccessibleStates();
 		removeUselessStates();

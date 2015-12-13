@@ -108,6 +108,7 @@ public class Automaton {
 				}
 			}
 		}
+		
 	}
 	private boolean verifyTransions(State state, State state2) {
 		boolean aux = false;

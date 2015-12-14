@@ -126,63 +126,67 @@ public class Automaton {
 			}
 		}
 		
-		System.out.println("Parte 1 - Separacao dos estados finais e não-finais");
+		System.out.println("Parte 1 - Separacao dos estados finais e nï¿½o-finais");
 		printArray(matriz);
 		
 		//Segunda parte
 		for(int i = 0; i < this.states.size(); i++){
 			for(int j = 0; j < this.states.size(); j++){
 				if(matriz[i][j]	 == 1){
-					if(verifyTransions(this.states.get(i),this.states.get(j)) == false){
+					if(verifyTransions(this.states.get(i),this.states.get(j))){
 						matriz[i][j] = 0;
 					}
 				}
 			}
 		}
 		
-		System.out.println("Parte 2 - Marcação dos estados que não tenham transições sobre os mesmos símbolos ");
+		System.out.println("Parte 2 - Marcaï¿½ï¿½o dos estados que nï¿½o tenham transiï¿½ï¿½es sobre os mesmos sï¿½mbolos ");
 		printArray(matriz);
 		
+		/*
 		//Terceira parte
 		for(int i = 0; i < this.states.size(); i++){
 			for(int j = 0; j < this.states.size(); j++){
 				if(matriz[i][j]	 == 1){
-					if(verifyTransions2(this.states.get(i),this.states.get(j)) == false){
+					if(verifyTransions(this.states.get(i),this.states.get(j))){
 						matriz[i][j] = 0;
+						//matriz[j][i] = 0;
 					}
 				}
 			}
 		}
 		
-		System.out.println("Parte 3 - Marcação dos estados que possuam transições não equivalentes");
+		System.out.println("Parte 3 - Marcaï¿½ï¿½o dos estados que possuam transiï¿½ï¿½es nï¿½o equivalentes");
 		printArray(matriz);
 
+	*/
 	}
-	
 	//Segunda parte
 	private boolean verifyTransions(State state, State state2){
-		boolean aux = false;
 		for(int i = 0; i < this.linkers.size(); i++){
-			if(this.linkers.get(i).getStart().equals(state) || this.linkers.get(i).getFinish().equals(state)){
-			aux = false;
-			for(int j = 0; j < this.linkers.size(); j++){
-					if(this.linkers.get(j).getStart().equals(state2) || this.linkers.get(j).getFinish().equals(state2)){
-						if((this.linkers.get(i).getStart().equals(this.linkers.get(j).getStart()) ||
-								this.linkers.get(i).getFinish().equals(this.linkers.get(j).getFinish())) &&
-								this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())) {
-							aux = true;
+			if(this.linkers.get(i).getStart().equals(state)){
+				for(int j = 0; j < this.linkers.size(); j++){
+					if(this.linkers.get(j).getStart().equals(state2)){ 
+						if(this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())){
+							return false;
 						}
-						if(aux == true){
-							return aux;
+					}
+				}
+			}
+			if(this.linkers.get(i).getFinish().equals(state)){
+				for(int j = 0; j < this.linkers.size(); j++){
+					if(this.linkers.get(j).getFinish().equals(state2)){ 
+						if(this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())){
+							return false;
 						}
 					}
 				}
 			}
 		}
-		return aux;
-	}
+		return true;		
+	} 
 	
-	private boolean verifyTransions2(State state, State state2){
+	/*private boolean verifyTransions2(State state, State state2){
 		boolean aux = false;
 		for(int i = 0; i < this.linkers.size(); i++){
 			aux = false;
@@ -199,7 +203,7 @@ public class Automaton {
 		}
 		return aux;
 	}
-	
+	*/
 	public void minimizer(){
 		removeInaccessibleStates();
 		removeUselessStates();

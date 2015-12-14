@@ -192,11 +192,26 @@ public class Automaton {
 					if(this.linkers.get(j).getStart().equals(state2)){ 
 						if(this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())){
 							if(this.linkers.get(i).getFinish().isAcept() && this.linkers.get(j).getFinish().isAcept() ||
-									this.linkers.get(i).getFinish().isReject() && this.linkers.get(j).getFinish().isReject())
+									this.linkers.get(i).getFinish().isReject() && this.linkers.get(j).getFinish().isReject() ||
+									!this.linkers.get(i).getFinish().isAcept() && !this.linkers.get(j).getFinish().isAcept() ||
+									!this.linkers.get(i).getFinish().isReject() && !this.linkers.get(j).getFinish().isReject())
 								return false;
 						}
 					}
-				}
+				}				
+			}
+			if(this.linkers.get(i).getFinish().equals(state)){
+				for(int j = 0; j < this.linkers.size(); j++){
+					if(this.linkers.get(j).getFinish().equals(state2)){ 
+						if(this.linkers.get(i).getSimbol().equals(this.linkers.get(j).getSimbol())){
+							if(this.linkers.get(i).getFinish().isAcept() && this.linkers.get(j).getFinish().isAcept() ||
+									this.linkers.get(i).getFinish().isReject() && this.linkers.get(j).getFinish().isReject() ||
+									!this.linkers.get(i).getFinish().isAcept() && !this.linkers.get(j).getFinish().isAcept() ||
+									!this.linkers.get(i).getFinish().isReject() && !this.linkers.get(j).getFinish().isReject())
+								return false;
+						}
+					}
+				}				
 			}
 		}
 		return true;		

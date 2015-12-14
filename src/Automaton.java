@@ -1,9 +1,14 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Automaton {
 	ArrayList<Linker> linkers = new ArrayList<Linker>();
 	ArrayList<State> states = new ArrayList<State>();
-
+	ArrayList<Linker> linkersMinimized = new ArrayList<Linker>();
+	Map<Integer,State> statesMinimized = new HashMap<Integer,State>();
+	int numberOfSimbols;
+	
 	public void addLinker(Linker linker){
 		linkers.add(linkers.size(), linker);
 	}
@@ -27,8 +32,32 @@ public class Automaton {
 	public Linker getLinker(int index){
 		return linkers.get(index);
 	}
+		
+	public ArrayList<Linker> getLinkersMinimized() {
+		return linkersMinimized;
+	}
 
-	private State getFirstState(){
+	public void setLinkersMinimized(ArrayList<Linker> linkersMinimized) {
+		this.linkersMinimized = linkersMinimized;
+	}
+
+	public Map<Integer, State> getStatesMinimized() {
+		return statesMinimized;
+	}
+
+	public void setStatesMinimized(Map<Integer, State> statesMinimized) {
+		this.statesMinimized = statesMinimized;
+	}	
+
+	public int getNumberOfSimbols() {
+		return numberOfSimbols;
+	}
+
+	public void setNumberOfSimbols(int numberOfSimbols) {
+		this.numberOfSimbols = numberOfSimbols;
+	}
+
+	public State getFirstState(){
 		for(int i=0; i<this.states.size(); i++){
 			if(this.states.get(i).isFirst()){
 				return this.states.get(i);
@@ -157,7 +186,31 @@ public class Automaton {
 
 		System.out.println("Parte 3 - Marca��o dos estados que possuam transi��es n�o equivalentes");
 		printArray(matriz);
-
+		
+		//Quarta parte 
+		int [] rep = new int[this.states.size()];
+		int count = 0;
+		for(int i=0; i> this.states.size(); i++){
+			rep[i]= -1;
+		}
+		for(int i=0; i<rep.length;i++){
+			count = count + 1;
+			rep[i] = count-1;
+			for(int j=0;j<matriz[0].length;j++){
+				if(matriz[i][j]==1){
+					rep[j] = rep[i];
+				}
+					
+			}
+		}
+		for(int i=0; i< this.linkers.size(); i++){
+			this.linkersMinimized.add(new Linker(this.linkers.get(i).getStart(), this.states.get(rep[this.linkers.get(i).getFinish().getId()]), this.linkers.get(i).getSimbol()));
+		}
+		for(int i=0; i<this.linkersMinimized.size(); i++){
+			this.statesMinimized.put(this.linkersMinimized.get(i).getStart().getId(), this.linkersMinimized.get(i).getStart());
+			this.statesMinimized.put(this.linkersMinimized.get(i).getFinish().getId(), this.linkersMinimized.get(i).getFinish());			
+		}
+				
 
 	}
 	//Segunda parte
@@ -216,8 +269,6 @@ public class Automaton {
 		}
 		return true;		
 	}
-
-
 	public void minimizer(){
 		removeInaccessibleStates();
 		removeUselessStates();

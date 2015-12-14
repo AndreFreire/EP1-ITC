@@ -22,7 +22,7 @@ public class Reader {
 				automaton.addState(new State(i));
 			}
 			
-			int numberOfSimbols = Integer.parseInt(fieldHeader[1]);
+			automaton.setNumberOfSimbols(Integer.parseInt(fieldHeader[1]));
 			State updatedState = automaton.getState(Integer.parseInt(fieldHeader[2]));
 			updatedState.setFirst(true);
 			automaton.updateState(updatedState, Integer.parseInt(fieldHeader[2]));

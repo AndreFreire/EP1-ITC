@@ -56,6 +56,42 @@ public class Automaton {
 	public void setNumberOfSimbols(int numberOfSimbols) {
 		this.numberOfSimbols = numberOfSimbols;
 	}
+	
+	public int getIndexFromIdState(int id){
+		for(int i=0; i<this.states.size(); i++){
+			if (this.states.get(i).getId()==id){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public String getFinishFromStateAndSymbol(State state, String symbol){
+		for(int i=0; i<this.linkersMinimized.size();i++){
+			if(this.linkersMinimized.get(i).getStart().equals(state) && this.linkersMinimized.get(i).getSimbol().equals(symbol)){
+				return String.valueOf(this.linkersMinimized.get(i).getFinish().getId());
+			}
+		}
+		return "-1";
+	}
+	
+	public State getStateFromId(int id){
+		for(int i=0; i<this.states.size(); i++){
+			if (this.states.get(i).getId()==id){
+				return this.states.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public void updateStates(){
+		for(int i=0; i<this.states.size(); i++){
+			this.states.get(i).setAccessible(false);
+			this.states.get(i).setAccessibleFinished(false);
+			this.states.get(i).setUtil(false);
+			this.states.get(i).setUtilFinished(false);			
+		}
+	}
 
 	public State getFirstState(){
 		for(int i=0; i<this.states.size(); i++){
@@ -155,8 +191,8 @@ public class Automaton {
 			}
 		}
 
-		System.out.println("Parte 1 - Separacao dos estados finais e n�o-finais");
-		printArray(matriz);
+		//System.out.println("Parte 1 - Separacao dos estados finais e n�o-finais");
+		//printArray(matriz);
 
 		//Segunda parte
 		for(int i = 0; i < this.states.size(); i++){
@@ -169,8 +205,8 @@ public class Automaton {
 			}
 		}
 
-		System.out.println("Parte 2 - Marca��o dos estados que n�o tenham transi��es sobre os mesmos s�mbolos ");
-		printArray(matriz);
+		//System.out.println("Parte 2 - Marca��o dos estados que n�o tenham transi��es sobre os mesmos s�mbolos ");
+		//printArray(matriz);
 
 
 		//Terceira parte
@@ -184,34 +220,73 @@ public class Automaton {
 			}
 		}
 
-		System.out.println("Parte 3 - Marca��o dos estados que possuam transi��es n�o equivalentes");
-		printArray(matriz);
+		//System.out.println("Parte 3 - Marca��o dos estados que possuam transi��es n�o equivalentes");
+		//printArray(matriz);
 		
 		//Quarta parte 
 		int [] rep = new int[this.states.size()];
 		int count = 0;
-		for(int i=0; i> this.states.size(); i++){
+		for(int i=0; i< this.states.size(); i++){
 			rep[i]= -1;
 		}
 		for(int i=0; i<rep.length;i++){
-			count = count + 1;
-			rep[i] = count-1;
-			for(int j=0;j<matriz[0].length;j++){
-				if(matriz[i][j]==1){
-					rep[j] = rep[i];
+			if(rep[i] == -1){
+				count = count + 1;
+				rep[i] = count-1;
+				for(int j=0;j<matriz.length;j++){
+					if(matriz[i][j]==1){
+						rep[j] = rep[i];
+					}					
 				}
-					
 			}
 		}
-		for(int i=0; i< this.linkers.size(); i++){
-			this.linkersMinimized.add(new Linker(this.linkers.get(i).getStart(), this.states.get(rep[this.linkers.get(i).getFinish().getId()]), this.linkers.get(i).getSimbol()));
+		
+		for(int i=0;i<this.states.size();i++){
+			for(int j=0; j<i; j++){
+				if(matriz[i][j]==1){
+					for(int k=0; k< this.linkers.size(); k++){
+						if(this.linkers.get(k).getFinish() == this.states.get(i)){
+							this.linkers.get(k).setFinish(this.states.get(j));
+							if(this.states.get(i).isFirst()){
+								this.states.get(j).setFirst(true);
+								this.states.get(i).setFirst(false);
+							}
+							if(this.states.get(i).isAcept()){
+								this.states.get(j).setAcept(true);
+								this.states.get(i).setAcept(false);
+							}
+							
+						}
+						if(this.linkers.get(k).getStart() == this.states.get(i)){
+							this.linkers.get(k).setStart(this.states.get(j));
+							if(this.states.get(i).isFirst()){
+								this.states.get(j).setFirst(true);
+								this.states.get(i).setFirst(false);
+							}
+							if(this.states.get(i).isAcept()){
+								this.states.get(j).setAcept(true);
+								this.states.get(i).setAcept(false);
+							}
+						}
+						linkersMinimized.add(linkers.get(k));						
+					}					
+				}
+			}
 		}
-		for(int i=0; i<this.linkersMinimized.size(); i++){
+		updateStates();
+		removeInaccessibleStates();
+		removeUselessStates();
+
+		for(int i =0; i< this.linkers.size();i++){
+			if(getStateFromId(this.linkers.get(i).getStart().getId()) != null && getStateFromId(this.linkers.get(i).getFinish().getId())!= null){
+				this.linkersMinimized.add(this.linkers.get(i));
+			}
+		}
+		for(int i=0; i<this.linkersMinimized.size();i++){
 			this.statesMinimized.put(this.linkersMinimized.get(i).getStart().getId(), this.linkersMinimized.get(i).getStart());
 			this.statesMinimized.put(this.linkersMinimized.get(i).getFinish().getId(), this.linkersMinimized.get(i).getFinish());			
 		}
-				
-
+		
 	}
 	//Segunda parte
 	private boolean verifyTransions(State state, State state2){

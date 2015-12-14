@@ -3,12 +3,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Reader {
-	public static Automaton leitura(){
+	public static Automaton leitura(String nameFile){
 
 		Automaton automaton = new Automaton();
 		
 		try {
-			FileReader file = new FileReader("input.txt"); 
+			FileReader file = new FileReader(nameFile); 
 			BufferedReader fileReader = new BufferedReader(file); 
 			String header = fileReader.readLine(); // le a primeira linha
 			String [] fieldHeader = header.split(" ");
